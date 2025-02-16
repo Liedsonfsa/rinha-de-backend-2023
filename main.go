@@ -3,18 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"rinha-de-backend-2023/database"
+	"rinha-de-backend-2023/models"
+	"rinha-de-backend-2023/repositories"
 
 	"github.com/google/uuid"
 )
-
-type Pessoa struct {
-	UUID 			string		`json:"id"`
-	Name 			string		`json:"nome"`
-	Apelido 		string		`json:"apelido"`
-	Nascimento 		string		`json:"nascimento"`
-	Stack 			[]string	`json:"stack"`
-}
 
 func main() {
 	http.HandleFunc("/pessoas", postPessoas)
@@ -23,13 +19,47 @@ func main() {
 }
 
 func postPessoas(w http.ResponseWriter, r* http.Request) {
-	var pessoa Pessoa
+	var pessoa models.People
 	if err := json.NewDecoder(r.Body).Decode(&pessoa); err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	pessoa.UUID = uuid.New().String()
+	db, err := database.Connect()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	fmt.Println(pessoa)
+	repositorio := repositories.NewPeopleRepository(db)
+	err = repositorio.Insert(pessoa)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(pessoa); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	showPeoples()
+}
+
+func showPeoples() {
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	repositorio := repositories.NewPeopleRepository(db)
+	peoples, err := repositorio.Search()
+	if err != nil {
+		fmt.Println(err)
+	}
+	
+	fmt.Println(peoples)
 }
