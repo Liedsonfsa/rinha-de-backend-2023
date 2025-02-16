@@ -15,7 +15,7 @@ func NewPeopleRepository(db *sql.DB) *PeopleRepository {
 }
 
 func (peopleRepo PeopleRepository) Insert(people models.People) error {
-	stm, err := peopleRepo.db.Prepare("INSERT INTO pessoas (id, apelido, nome, nascimento, stack) VALUES(?, ?, ?, ?, ?)")
+	stm, err := peopleRepo.db.Prepare("INSERT INTO pessoas (id, apelido, nome, nascimento, stack) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,6 @@ func (peopleRepo PeopleRepository) SearchByID(id string) (models.People, error) 
 	var people models.People
 
 	if rows.Next() {
-		// var people models.People
 		var stackJSON sql.NullString
 
 		if err = rows.Scan(&people.UUID, &people.Apelido, &people.Name, &people.Nascimento, &stackJSON); err != nil {
@@ -55,8 +54,6 @@ func (peopleRepo PeopleRepository) SearchByID(id string) (models.People, error) 
 				return models.People{}, err
 			}
 		}
-
-		// peoples = append(peoples, people)
 	}
 
 	return people, nil
