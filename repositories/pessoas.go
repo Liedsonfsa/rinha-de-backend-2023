@@ -61,3 +61,19 @@ func (peopleRepo PeopleRepository) SearchByID(id string) (models.People, error) 
 
 	return people, nil
 }
+
+func (peopleRepo PeopleRepository) Count() (int, error) {
+	rows, err := peopleRepo.db.Query("SELECT * FROM pessoas")
+	if err != nil {
+		return -1, err
+	}
+	defer rows.Close()
+
+	var count int = 0
+
+	for rows.Next() {
+		count += 1
+	}
+
+	return count, nil
+}
