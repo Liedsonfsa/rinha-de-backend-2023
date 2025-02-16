@@ -33,31 +33,31 @@ func (peopleRepo PeopleRepository) Insert(people models.People) error {
 	return nil
 }
 
-func (peopleRepo PeopleRepository) Search() ([]models.People, error) {
-	rows, err := peopleRepo.db.Query("SELECT * FROM pessoas")
+func (peopleRepo PeopleRepository) SearchByID(id string) (models.People, error) {
+	rows, err := peopleRepo.db.Query("SELECT id, apelido, nome, nascimento, stack FROM pessoas WHERE id = ?", id)
 	if err != nil {
-		return nil, err
+		return models.People{}, err
 	}
 	defer rows.Close()
 
-	var peoples []models.People
+	var people models.People
 
-	for rows.Next() {
-		var people models.People
+	if rows.Next() {
+		// var people models.People
 		var stackJSON sql.NullString
 
 		if err = rows.Scan(&people.UUID, &people.Apelido, &people.Name, &people.Nascimento, &stackJSON); err != nil {
-			return nil, err
+			return models.People{}, err
 		}
 
 		if stackJSON.Valid {
 			if err = json.Unmarshal([]byte(stackJSON.String), &people.Stack); err != nil {
-				return nil, err
+				return models.People{}, err
 			}
 		}
 
-		peoples = append(peoples, people)
+		// peoples = append(peoples, people)
 	}
 
-	return peoples, nil
+	return people, nil
 }

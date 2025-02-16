@@ -3,13 +3,14 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
+	// "os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func Connect() (*sql.DB, error) {
-	stringConnection := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("DB_USER"),  os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	stringConnection := fmt.Sprintf("root:liedsonfsa@/rinha?charset=utf8&parseTime=True&loc=Local")
+	// fmt.Println(stringConnection)
 	db, err := sql.Open("mysql", stringConnection)
 	if err != nil {
 		return nil, err
