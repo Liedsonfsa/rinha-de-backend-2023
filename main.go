@@ -7,9 +7,10 @@ import (
 
 func main() {
 
-	http.HandleFunc("/pessoas", controllers.InsertPeople)
-	http.HandleFunc("/pessoas/{id}", controllers.SearchByID)
-	http.HandleFunc("/contagem-pessoas", controllers.Count)
-
+	http.HandleFunc("POST /pessoas", controllers.InsertPeople)
+	http.HandleFunc("GET /pessoas/{id}", controllers.SearchByID)
+	http.HandleFunc("GET /pessoas", controllers.TermSearch)
+	http.HandleFunc("GET /contagem-pessoas", controllers.Count)
+	
 	http.ListenAndServe(":3000", nil)
 }

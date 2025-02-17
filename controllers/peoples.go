@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"fmt"
 	"rinha-de-backend-2023/database"
 	"rinha-de-backend-2023/models"
 	"rinha-de-backend-2023/repositories"
@@ -12,11 +13,6 @@ import (
 )
 
 func InsertPeople(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "método não implementado", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var pessoa models.People
 	if err := json.NewDecoder(r.Body).Decode(&pessoa); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -45,11 +41,6 @@ func InsertPeople(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchByID(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "método não implementado", http.StatusMethodNotAllowed)
-		return
-	}
-	
 	uuid := r.URL.Path[9:]
 
 	db, err := database.Connect()
@@ -73,12 +64,32 @@ func SearchByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Count(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "método não implementado", http.StatusMethodNotAllowed)
-		return		
+func TermSearch(w http.ResponseWriter, r *http.Request) {
+	term := r.URL.Query().Get("t")
+	fmt.Println(term)
+
+	db, err := database.Connect()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewPeopleRepository(db)
+	peoples, err := repository.TermSearch(term)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(peoples); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func Count(w http.ResponseWriter, r *http.Request) {
 	db, err := database.Connect()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

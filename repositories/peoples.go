@@ -25,6 +25,7 @@ func (peopleRepo PeopleRepository) Insert(people models.People) error {
 	if err != nil {
 		return err
 	}
+	
 	_, err = stm.Exec(people.UUID, people.Apelido, people.Name, people.Nascimento, stack)
 	if err != nil {
 		return err
@@ -57,6 +58,35 @@ func (peopleRepo PeopleRepository) SearchByID(id string) (models.People, error) 
 	}
 
 	return people, nil
+}
+
+func (peopleRepo PeopleRepository) TermSearch(term string) ([]models.People, error) {
+	rows, err := peopleRepo.db.Query("SELECT id, nome, apelido, nascimento, stack FROM pessoas WHERE LOWER(nome) LIKE LOWER(?) OR LOWER(apelido) LIKE LOWER(?) OR JSON_SEARCH(LOWER(stack), 'one', LOWER(?)) IS NOT NULL","%"+term+"%", "%"+term+"%", term)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var peoples []models.People
+
+	for rows.Next() {
+		var people models.People
+		var stackJSON sql.NullString
+
+		if err  = rows.Scan(&people.UUID, &people.Name, &people.Apelido, &people.Nascimento, &stackJSON); err != nil {
+			return nil, err
+		}
+
+		if stackJSON.Valid {
+			if err = json.Unmarshal([]byte(stackJSON.String), &people.Stack); err != nil {
+				return nil, err
+			}
+		}
+
+		peoples = append(peoples, people)
+	}
+
+	return peoples, nil
 }
 
 func (peopleRepo PeopleRepository) Count() (int, error) {
