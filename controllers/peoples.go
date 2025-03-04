@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"fmt"
 	"rinha-de-backend-2023/database"
 	"rinha-de-backend-2023/models"
 	"rinha-de-backend-2023/repositories"
@@ -66,7 +65,6 @@ func SearchByID(w http.ResponseWriter, r *http.Request) {
 
 func TermSearch(w http.ResponseWriter, r *http.Request) {
 	term := r.URL.Query().Get("t")
-	fmt.Println(term)
 
 	db, err := database.Connect()
 	if err != nil {
