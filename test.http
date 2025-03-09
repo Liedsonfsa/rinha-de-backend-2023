@@ -1,2 +1,0 @@
-GET http://localhost:3000/pessoas?t=c
-content-type: application/json

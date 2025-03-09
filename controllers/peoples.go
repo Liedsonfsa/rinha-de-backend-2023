@@ -8,39 +8,41 @@ import (
 	"rinha-de-backend-2023/repositories"
 
 	"github.com/google/uuid"
-	// "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 )
 
 func InsertPeople(w http.ResponseWriter, r *http.Request) {
-	var pessoa models.People
-	if err := json.NewDecoder(r.Body).Decode(&pessoa); err != nil {
+	var people models.People
+	
+	if err := json.NewDecoder(r.Body).Decode(&people); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	pessoa.UUID = uuid.New().String()
+	people.UUID = uuid.New().String()
 	db, err := database.Connect()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	repositorio := repositories.NewPeopleRepository(db)
-	err = repositorio.Insert(pessoa)
+	repository := repositories.NewPeopleRepository(db)
+	err = repository.Insert(people)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(pessoa); err != nil {
+	if err := json.NewEncoder(w).Encode(people); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func SearchByID(w http.ResponseWriter, r *http.Request) {
-	uuid := r.URL.Path[9:]
+	params := mux.Vars(r)
+	uuid := params["id"]
 
 	db, err := database.Connect()
 	if err != nil {
