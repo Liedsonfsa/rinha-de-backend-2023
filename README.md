@@ -10,6 +10,10 @@ POST {host}/pessoas
 ```
 
 #### Request
+```bash
+http://localhost:3000/pessoas
+```
+
 ```json
 {
     "nome": "José Roberto",
