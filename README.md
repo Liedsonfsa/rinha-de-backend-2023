@@ -9,7 +9,7 @@ This repository contains the solution to the challenge <a herf="https://github.c
 POST {host}/pessoas
 ```
 
-#### Example
+#### Request
 ```json
 {
     "id": "075c196d-c38d-4715-8a16-03e2efdbe988",
@@ -29,7 +29,7 @@ POST {host}/pessoas
 GET {host}/pessoas/{id}
 ```
 
-#### Example
+#### Request
 ```bash
 http://localhost:3000/pessoas/075c196d-c38d-4715-8a16-03e2efdbe988
 ```
@@ -54,7 +54,7 @@ http://localhost:3000/pessoas/075c196d-c38d-4715-8a16-03e2efdbe988
 GET {host}/pessoas
 ```
 
-#### Example
+#### Request
 ```bash
 http://localhost:3000/pessoas?t=node
 ```
@@ -117,7 +117,7 @@ http://localhost:3000/pessoas?t=node
 GET {host}/contagem-pessoas
 ```
 
-#### Example
+#### Request
 ```bash
 http://localhost:3000/contagem-pessoas
 ```
