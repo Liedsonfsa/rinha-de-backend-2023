@@ -12,6 +12,21 @@ POST {host}/pessoas
 #### Request
 ```json
 {
+    "nome": "José Roberto",
+    "apelido": "josé",
+    "nascimento": "2000-10-01T00:00:00-03:00",
+    "stack": [
+        "C#",
+        "Node",
+        "Oracle"
+    ]
+}
+```
+
+#### Response
+
+```json
+{
     "id": "075c196d-c38d-4715-8a16-03e2efdbe988",
     "nome": "José Roberto",
     "apelido": "josé",
@@ -124,5 +139,11 @@ http://localhost:3000/contagem-pessoas
 
 #### Response
 ```json
-"quantidade": 4
+{
+    "quantidade": 4
+}
 ```
+
+## Observation
+
+This repository contains only the API functionalities requested in the challenge. The virtualization, Load Balancer and Stress Test parts were not implemented.
